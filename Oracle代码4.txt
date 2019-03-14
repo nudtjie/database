@@ -1,0 +1,142 @@
+CREATE USER yuhujie1
+IDENTIFIED BY 111111;
+
+CREATE USER yuhujie2
+IDENTIFIED BY 222222;
+
+CREATE USER yuhujie3
+IDENTIFIED BY 333333;
+
+ALTER USER yuhujie1 ACCOUNT UNLOCK;
+
+ALTER USER yuhujie2 ACCOUNT UNLOCK;
+
+ALTER USER yuhujie3 ACCOUNT LOCK;
+
+ALTER USER yuhujie1 IDENTIFIED BY nudt2012;
+
+ALTER USER yuhujie2 IDENTIFIED BY nudt2013;
+
+ALTER USER yuhujie3 IDENTIFIED BY nudt2014;
+
+DROP USER yuhujie3;
+
+GRANT CREATE USER,DROP USER,CREATE TABLE
+TO yuhujie1;
+
+REVOKE DROP USER
+FROM yuhujie1;
+
+CREATE ROLE myrole123;
+
+CREATE ROLE myrole456 IDENTIFIED BY gfkd2012;
+
+
+GRANT CREATE USER
+TO myrole123;
+
+GRANT CREATE TABLE,DROP ANY TABLE
+TO myrole456;
+
+REVOKE DROP ANY TABLE
+FROM myrole456;
+
+
+GRANT myrole123 TO yuhujie1;
+
+GRANT myrole456 TO yuhujie2;
+
+SET ROLE myrole123;
+
+DROP ROLE myrole456;
+
+CREATE TABLESPACE yuhujieA
+datafile 'F:\Oraclefile\yuhujieA.dbf' 
+size 10M
+extent management local autoallocate;
+
+CREATE TABLESPACE yuhujieB
+datafile 'F:\Oraclefile\yuhujieB.dbf' 
+size 10M
+extent management local;
+
+ALTER TABLESPACE yuhujieA
+ADD DATAFILE 'F:\Oraclefile\1.dbf'
+SIZE 50M;
+
+ALTER TABLESPACE yuhujieB
+ADD DATAFILE 'F:\Oraclefile\2.dbf'
+SIZE 50M;
+
+ALTER DATABASE DATAFILE 'F:\Oraclefile\yuhujieA.dbf'
+RESIZE 60M;
+
+ALTER DATABASE DATAFILE 'F:\Oraclefile\2.dbf'
+AUTOEXTEND ON;
+
+ALTER TABLESPACE yuhujieA READ ONLY;
+
+DROP TABLESPACE yuhujieB;
+
+CREATE DIRECTORY YHJDir AS 'C:\yuhujieBackup';
+
+expdp system/123456 directory=YHJDir dumpfile=school.dmp tables=S,C,SC
+
+expdp system/123456 directory=YHJDir dumpfile=company.dmp tables=Emp,Dept
+
+impdp system/123456 directory=YHJDir dumpfile=school.dmp tables=S,C,SC table_exists_action = replace
+
+impdp system/123456 directory=YHJDir dumpfile=company.dmp tables=Emp,Dept table_exists_action = replace
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

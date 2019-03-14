@@ -1,0 +1,267 @@
+SELECT *
+FROM S;
+
+SELECT *
+FROM C;
+
+SELECT *
+FROM SC;
+
+SELECT *
+FROM Dept;
+
+SELECT *
+FROM Emp;
+
+*****************************************************************
+
+CREATE OR REPLACE PROCEDURE PRINTS
+AS
+
+
+set serveroutput on
+DECLARE
+no S.Sno%TYPE;
+name S.Sname%TYPE;
+age S.Sage%TYPE;
+sex S.Ssex%TYPE;
+CURSOR cur_1 IS
+SELECT Sno,Sname,Sage,Ssex FROM S;
+BEGIN
+OPEN cur_1;
+LOOP
+FETCH cur_1 INTO no,name,age,sex;
+EXIT WHEN cur_1%NOTFOUND;
+dbms_output.put_line('Sno:'||no||'Sname:'||name||'Sage:'||age||'Ssex:'||sex);
+END LOOP;
+close cur_1;
+END;
+/
+
+
+set serveroutput on
+DECLARE
+c_no C.Cno%TYPE;
+c_name C.Cname%TYPE;
+c_teacher C.teacher%TYPE;
+BEGIN
+SELECT C.Cno,C.Cname,C.teacher
+INTO c_no,c_name,c_teacher FROM C
+WHERE C.Cno='C1';
+DBMS_OUTPUT.PUT_LINE('Cno:'||c_no||'Cname:'||c_name||'teacher:'||c_teacher);
+EXCEPTION
+WHEN NO_DATA_FOUND THEN
+DBMS_OUTPUT.PUT_LINE('NO DATA FOUND');
+END;
+/
+
+set serveroutput on
+DECLARE
+CURSOR cur_3 IS
+SELECT * FROM Emp;
+BEGIN
+FOR rec IN  cur_3 LOOP
+IF(rec.Sal<1000) THEN
+UPDATE Emp SET Sal=1000
+WHERE EmpNo=rec.EmpNo AND Job='Clerk';
+END IF;
+END LOOP;
+END;
+/
+
+SELECT EmpNo,Ename,Sal FROM Emp
+WHERE Job='Clerk';
+
+
+set serveroutput on
+DECLARE
+CURSOR cur_4 IS
+SELECT * FROM Emp WHERE DeptNo='30';
+BEGIN
+FOR rec IN  cur_4 LOOP
+IF(rec.Comm>0 AND rec.Comm<1000) THEN
+ UPDATE Emp SET Comm=Comm*1.15
+WHERE EmpNo=rec.EmpNo;
+ELSIF(rec.Comm>=1000) THEN
+ UPDATE Emp SET Comm=Comm*1.05
+WHERE EmpNo=rec.EmpNo;
+ELSIF(rec.Comm IS NULL OR rec.Comm=0) THEN
+ UPDATE Emp SET Comm=300
+WHERE EmpNo=rec.EmpNo;
+END IF;
+END LOOP;
+END;
+/
+
+sc_grade SC.grade%TYPE;
+sc_sno SC.Sno%TYPE;
+sc_cno SC.Cno%TYPE;
+s_age S.Sage%TYPE;
+c_name C.Cname%TYPE;
+
+
+
+SELECT EmpNo,Ename,Comm FROM Emp
+WHERE DeptNo='30';
+
+
+
+
+CREATE OR REPLACE PROCEDURE UPgrade
+AS
+CURSOR cur_5 IS
+SELECT * FROM SC
+WHERE SC.Sno IN
+(SELECT S.Sno
+FROM S
+WHERE Sage='19')
+AND SC.Cno IN
+(SELECT C.Cno
+FROM C
+WHERE Cname='DB');
+BEGIN
+FOR rec IN cur_5 LOOP 
+ UPDATE SC SET grade=grade+5
+WHERE SC.Sno=rec.Sno AND SC.Cno=rec.Cno;
+END LOOP;
+END;
+/
+
+CALL UPgrade();
+
+SELECT * FROM SC
+WHERE SC.Sno IN
+(SELECT S.Sno
+FROM S
+WHERE Sage='19')
+AND SC.Cno IN
+(SELECT C.Cno
+FROM C
+WHERE Cname='DB');
+
+
+
+CREATE OR REPLACE PROCEDURE Printone
+(c_name C.Cname%TYPE) AS
+CURSOR cur_6 IS
+SELECT S.Sname,S.Sno,SC.grade
+FROM S,SC
+WHERE S.Sno=SC.Sno
+AND SC.Cno IN
+(SELECT C.Cno
+FROM C
+WHERE C.Cname=c_name);
+BEGIN 
+FOR rec IN cur_6 LOOP
+DBMS_OUTPUT.PUT_LINE('学号：'||rec.Sno||'姓名：'||rec.Sname||'成绩：'||rec.grade);
+END LOOP;
+END;
+/
+
+CALL Printone('DB');
+CALL Printone('Maths');
+CALL Printone('Physics');
+CALL Printone('Chemistry');
+CALL Printone('OS');
+
+
+CREATE OR REPLACE TRIGGER tri_1
+AFTER INSERT ON S
+FOR EACH ROW
+BEGIN
+ INSERT INTO SC
+  SELECT :NEW.Sno,Cno,60
+  FROM C;
+END;
+/
+
+INSERT INTO S VALUES ('S6', 'Yu', '20', 'F');
+
+CREATE OR REPLACE TRIGGER tri_2
+AFTER DELETE ON S
+FOR EACH ROW
+BEGIN
+ DELETE
+ FROM SC
+ WHERE Sno=:OLD.Sno;
+END;
+/
+
+DELETE 
+FROM S
+WHERE Sno='S1';
+
+SELECT *
+FROM S;
+
+SELECT *
+FROM SC;
+
+CREATE OR REPLACE TRIGGER tri_3
+BEFORE INSERT ON Emp
+FOR EACH ROW
+DECLARE avgsal Emp.Sal%TYPE;
+BEGIN
+SELECT AVG(Sal) INTO avgsal
+FROM Emp
+WHERE DeptNo=:NEW.DeptNo;
+IF(:NEW.Sal>avgsal) THEN
+ :NEW.Sal:=avgsal;
+END IF;
+END;
+/
+
+SELECT EmpNo,Sal,DeptNo
+FROM Emp;
+
+INSERT INTO EMP VALUES(1111,'WANG','Clerk',7902,'17-12月-05',10000,NULL,20);
+
+DELETE 
+FROM Emp
+WHERE EmpNo=1111;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

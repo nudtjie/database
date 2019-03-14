@@ -1,0 +1,275 @@
+CREATE TABLE S(
+Sno CHAR(9) PRIMARY KEY,
+Sname CHAR(20) NOT NULL,
+Sage NUMBER(3),
+Ssex CHAR(2) CHECK (Ssex IN ('M','F')));
+
+COMMENT ON table S IS '学生信息';
+
+
+CREATE TABLE C(
+Cno CHAR(9) PRIMARY KEY,
+Cname CHAR(40) NOT NULL,
+teacher CHAR(20));
+
+COMMENT ON table C IS '课程信息';
+
+
+CREATE TABLE SC(
+Sno CHAR(9),
+Cno CHAR(9),
+grade NUMBER(3),
+PRIMARY KEY(Sno,Cno),
+FOREIGN KEY(Sno) REFERENCES S(Sno),
+FOREIGN KEY(Cno) REFERENCES C(Cno),
+CHECK (grade>=0 AND grade <=100));
+
+COMMENT ON table SC IS '选课信息';
+
+
+create table Project(
+ProjlD number(4) primary key,
+P_Desc varchar2(20) not null,
+P_Start_Date date,
+P_End_Date date,
+Budget_Amount number(7,2),
+Max_No_Staff number(2));
+
+alter table Project add constraint pro_1 check(P_Start_Date<=P_End_Date);
+
+COMMENT ON table Project IS '项目信息';
+
+comment on column Project.ProjlD  is '项目号';
+comment on column Project.P_Desc  is '项目描述';
+comment on column Project.P_Start_Date  is '开始时间';
+comment on column Project.P_End_Date  is '结束时间';
+comment on column Project.Budget_Amount  is '经费数';
+
+
+
+create table Emp(
+EmpNO number(4) primary key,
+Ename varchar(10) not null,
+Job varchar(9),
+Mgr number(4),
+Hiredate date,
+Sal number(7,2),
+Comm number(7,2),
+DeptNO number(3));
+
+COMMENT ON table Emp IS '雇员信息';
+
+comment on column Emp.EmpNO  is '雇员号';
+comment on column Emp.Ename  is '姓名';
+comment on column Emp.Job  is '工作类型';
+comment on column Emp.Mgr  is '直接上级';
+comment on column Emp.Hiredate  is '受聘日期';
+comment on column Emp.Sal  is '工资';
+comment on column Emp.Comm  is '奖金';
+comment on column Emp.DeptNO  is '所属部门';
+
+create table Assignment(
+ProjlD number(4),
+EmpNO number(4),
+A_Start_Time date,
+A_End_Time date,
+Bill_Rate number(4,2),
+Assign_Type varchar2(2),
+primary key(ProjlD,EmpNO),
+foreign key(ProjlD) references Project(ProjlD),
+foreign key(EmpNO) references Emp(EmpNO));
+
+COMMENT ON table Assignment IS '雇佣关系';
+
+comment on column Assignment.ProjlD  is '项目号';
+comment on column Assignment.EmpNO  is '雇员号';
+comment on column Assignment.A_Start_Time  is '雇佣开始时间';
+comment on column Assignment.A_End_Time  is '雇佣结束时间';
+comment on column Assignment.Assign_Type  is '雇佣类型';
+
+
+alter table Emp
+	rename column DeprNO to DeptNO;
+
+DESC S
+DESC C
+DESC SC
+DESC Project
+DESC Emp
+DESC Assignment
+
+ALTER TABLE Project
+	ADD Comments LONG;
+
+
+DESC Project
+
+
+ALTER TABLE Assignment
+	ADD Hours NUMBER;
+
+DESC Assignment
+
+INSERT INTO S VALUES('S1','Wang','20','M');
+INSERT INTO S VALUES('S2','Liu','19','M');
+INSERT INTO S VALUES('S3','Chen','22','M');
+INSERT INTO S VALUES('S4','Wu','19','M');
+INSERT INTO S VALUES('S5','Lou','21','F');
+INSERT INTO S VALUES('S8','Dong','18','F');
+
+SELECT *
+FROM S;
+
+
+INSERT INTO C VALUES('C2','Maths','Ma');
+INSERT INTO C VALUES('C4','Physics','Shi');
+INSERT INTO C VALUES('C3','Chemistry','Zhou');
+INSERT INTO C VALUES('C1','DB','Li');
+INSERT INTO C VALUES('C5','OS','Wen');
+
+
+SELECT *
+FROM C;
+
+INSERT INTO SC VALUES('S1','C1','80');
+INSERT INTO SC VALUES('S1','C2','70');
+INSERT INTO SC VALUES('S1','C3','85');
+INSERT INTO SC VALUES('S1','C4','90');
+INSERT INTO SC VALUES('S1','C5','70');
+INSERT INTO SC VALUES('S2','C1','85');
+INSERT INTO SC VALUES('S2','C2',NULL);
+INSERT INTO SC VALUES('S2','C4',NULL);
+INSERT INTO SC VALUES('S3','C1','90');
+INSERT INTO SC VALUES('S3','C2','85');
+INSERT INTO SC VALUES('S3','C3','95');
+INSERT INTO SC VALUES('S4','C1','75');
+INSERT INTO SC VALUES('S4','C3',NULL);
+INSERT INTO SC VALUES('S4','C4','70');
+INSERT INTO SC VALUES('S5','C1','70');
+INSERT INTO SC VALUES('S5','C2','60');
+INSERT INTO SC VALUES('S5','C3','80');
+INSERT INTO SC VALUES('S5','C5','65');
+INSERT INTO SC VALUES('S8','C1','90');
+INSERT INTO SC VALUES('S8','C2',NULL);
+INSERT INTO SC VALUES('S8','C3','90');
+INSERT INTO SC VALUES('S8','C5',NULL);
+
+SELECT *
+FROM SC;
+
+
+INSERT INTO Project VALUES('1','Write C030 course','02-1月-88','07-1月-88','500','1','BR creative');
+INSERT INTO Project VALUES('2','Proof read notes','01-1月-89','10-1月-89','600','1','Your choice');
+
+
+SELECT *
+FROM Project;
+
+INSERT INTO Emp VALUES('7369','Smith','Clerk','7902','18-1月-80','800',NULL,'20');
+INSERT INTO Emp VALUES('7902','Ford','Analyst','7566','03-1月-80','3000',NULL,'20');
+INSERT INTO Emp VALUES('7844','Turner','Salesman','7698','08-1月-80','1500','0','30');
+
+SELECT *
+FROM Emp;
+
+
+INSERT INTO Assignment VALUES('1','7369','01-1月-88','03-1月-88','50.00','WR','15');
+INSERT INTO Assignment VALUES('1','7902','04-1月-88','07-1月-88','55.00','WR','20');
+INSERT INTO Assignment VALUES('2','7844','01-1月-89','10-1月-89','45.50','PF','30');
+
+
+SELECT *
+FROM Assignment;
+
+
+update SC
+set grade=grade*1.1
+where grade is NOT NULL AND Cno='C2';
+
+
+SELECT *
+FROM SC
+WHERE Cno='C2' AND GRADE IS NOT NULL;
+
+
+DELETE 
+FROM SC
+WHERE Sno='S8';
+DELETE
+FROM S
+WHERE Sno='S8';
+
+SELECT *
+FROM SC;
+SELECT *
+FROM S;
+
+
+ALTER TABLE SC
+DROP CONSTRAINT XXX FOREIGN KEY(Sno) REFERENCES S(Sno) ON DELETE CASCADE;
+
+ADD CONSTRAINT XXX FOREIGN KEY(Sno) REFERENCES S(Sno) ON DELETE CASCADE;
+
+
+DELETE
+FROM SC
+WHERE Cno IN (SELECT Cno
+FROM C
+WHERE Cname='Physics');
+
+
+
+
+INSERT INTO SC VALUES('S1','C4','90');
+INSERT INTO SC VALUES('S2','C4',NULL);
+INSERT INTO SC VALUES('S4','C4','70');
+
+
+
+
+UPDATE Assignment 
+SET Assign_Type='WF'
+WHERE Assign_Type='WR';
+
+SELECT *
+FROM Assignment;
+
+INSERT INTO Project VALUES('3','Listenning','01-1月-89','11-1月-89','700','1','Our choice');
+INSERT INTO Project VALUES('4','Speaking','02-1月-89','12-1月-89','800','1','Their choice');
+
+SELECT *
+FROM Project;
+
+
+INSERT INTO Assignment VALUES('2','7902','01-1月-89','11-1月-89','60','PF','40');
+
+
+SELECT *
+FROM Assignment;
+
+DELETE
+FROM Project
+WHERE ProjlD='3';
+
+DELETE
+FROM Assignment
+WHERE ProjlD='1' AND EmpNO='7902';
+
+
+=====================================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,316 @@
+CREATE TABLE S(
+	Sno 	CHAR(9)		PRIMARY KEY,
+	Sname 	CHAR(20)		NOT NULL,
+	Sage 	NUMBER(3),
+	Ssex 	CHAR(2)		CHECK(Ssex IN ('M','F')));
+INSERT INTO S VALUES ('S1', 'Wang', '20', 'M');
+INSERT INTO S VALUES ('S2', 'Liu', '19', 'M');
+INSERT INTO S VALUES ('S3', 'Chen', '22', 'M');
+INSERT INTO S VALUES ('S4', 'Wu', '19', 'M');
+INSERT INTO S VALUES ('S5', 'Lou', '21', 'F');
+INSERT INTO S VALUES ('S8', 'Dong', '18', 'F');
+
+
+CREATE TABLE C(
+	Cno 	CHAR(9)		PRIMARY KEY,
+	Cname 	CHAR(40)		NOT NULL,
+	teacher	CHAR(20));
+INSERT INTO C VALUES ('C2', 'Maths', 'Ma');
+INSERT INTO C VALUES ('C4', 'Physics', 'Shi');
+INSERT INTO C VALUES ('C3', 'Chemistry', 'Zhou');
+INSERT INTO C VALUES ('C1', 'DB', 'Li');
+INSERT INTO C VALUES ('C5', 'OS', 'Wen');
+
+
+CREATE TABLE SC(
+Sno CHAR(9),
+Cno CHAR(9),
+grade NUMBER(3)	
+CHECK(grade BETWEEN 0 AND 100),
+PRIMARY KEY(Sno,Cno),
+FOREIGN KEY(Sno) REFERENCES S(Sno),
+FOREIGN KEY(Cno) REFERENCES C(Cno));
+
+
+INSERT INTO SC VALUES ('S1', 'C1', 80);
+INSERT INTO SC VALUES ('S1', 'C2', 70);
+INSERT INTO SC VALUES ('S1', 'C3', 85);
+INSERT INTO SC VALUES ('S1', 'C4', 90);
+INSERT INTO SC VALUES ('S1', 'C5', 70);
+INSERT INTO SC VALUES ('S2', 'C1', 85);
+INSERT INTO SC VALUES ('S2', 'C2', NULL);
+INSERT INTO SC VALUES ('S2', 'C4', NULL);
+INSERT INTO SC VALUES ('S3', 'C1', 90);
+INSERT INTO SC VALUES ('S3', 'C2', 85);
+INSERT INTO SC VALUES ('S3', 'C3', 95);
+INSERT INTO SC VALUES ('S4', 'C1', 75);
+INSERT INTO SC VALUES ('S4', 'C3', NULL);
+INSERT INTO SC VALUES ('S4', 'C4', 70);
+INSERT INTO SC VALUES ('S5', 'C1', 70);
+INSERT INTO SC VALUES ('S5', 'C2', 60);
+INSERT INTO SC VALUES ('S5', 'C3', 80);
+INSERT INTO SC VALUES ('S5', 'C5', 65);
+INSERT INTO SC VALUES ('S8', 'C1', 90);
+INSERT INTO SC VALUES ('S8', 'C2', NULL);
+INSERT INTO SC VALUES ('S8', 'C3', 90);
+INSERT INTO SC VALUES ('S8', 'C5', NULL); 
+
+SELECT *
+FROM S;
+
+
+SELECT *
+FROM C;
+
+
+SELECT *
+FROM SC;
+
+SELECT S.Sno,Sname
+FROM S,SC
+WHERE S.Sno=SC.Sno AND
+SC.Cno='C2';
+
+SELECT S.Sno,Sname
+FROM S,SC,C
+WHERE SC.Sno=S.Sno AND
+SC.Cno=C.Cno AND
+Cname='Maths';
+
+SELECT Sname,Sage
+FROM S,SC
+WHERE S.Sno=SC.Sno
+MINUS
+SELECT Sname,Sage
+FROM S,SC
+WHERE S.Sno=SC.Sno AND
+Cno='C2';
+
+SELECT Sname
+FROM S
+WHERE NOT EXISTS(
+SELECT *
+FROM C
+WHERE NOT EXISTS(
+SELECT *
+FROM SC
+WHERE Sno=S.Sno AND
+Cno=C.Cno));
+
+SELECT Sno,COUNT(*),AVG(grade)
+FROM SC
+WHERE grade IS NOT NULL
+GROUP BY Sno
+ORDER BY Sno ASC;
+
+=============================================================
+部门（编号，名称，地址）
+CREATE TABLE Dept(
+	DeptNO NUMBER(3) PRIMARY KEY, 
+	Dname VARCHAR2(14), 
+	Location VARCHAR2(13)); 
+INSERT INTO DEPT VALUES(10,'Accounting','New York');
+INSERT INTO DEPT VALUES (20,'Research','Dallas');
+INSERT INTO DEPT VALUES (30,'Sales','Chicago');
+INSERT INTO DEPT VALUES (40,'Operations','Boston');
+员工（工号，姓名，职位，上司，受雇日期，工资，奖金，所在部门编号）
+CREATE TABLE Emp(
+	EmpNO NUMBER(4) PRIMARY KEY,
+	Ename VARCHAR2(10), 
+	Job VARCHAR2(9),
+	Mgr VARCHAR2(9), 
+	Hiredate DATE, 
+	Sal NUMBER(7,2), 
+	Comm NUMBER(7,2), 
+	DeptNO NUMBER(3), 
+	FOREIGN KEY(DeptNO) REFERENCES Dept(DeptNO));
+INSERT INTO EMP VALUES(7369,'Smith','Clerk',7902,'17-12月-05',800,NULL,20);
+INSERT INTO EMP VALUES (7499,'Allen','Salesman',7698,'20-2月-02',1600,300,30);
+INSERT INTO EMP VALUES (7521,'Ward', 'Salesman',7698,'22-2月-96',1250,500,30);
+INSERT INTO EMP VALUES (7566,'Jones','Manager',7839,'02-4月-09',2975,NULL,20);
+INSERT INTO EMP VALUES (7654,'Martin', 'Salesman',7698,'28-9月-10',1250,1400,30);
+INSERT INTO EMP VALUES (7698,'Blake', 'Manager',7839,'01-5月-08',2850,NULL,30);
+INSERT INTO EMP VALUES (7782,'Clark', 'Manager',7839,'09-6月-05',2450,NULL,10);
+INSERT INTO EMP VALUES (7788,'Scott','Analyst',7566,'19-4月-10',3000,NULL,20);
+INSERT INTO EMP VALUES (7839,'King','President',NULL,'17-11月-11',5000,NULL,10);
+INSERT INTO EMP VALUES (7844,'Turner', 'Salesman',7698,'08-9月-07',1500,0,30);
+INSERT INTO EMP VALUES (7876,'Adams', 'Clerk',7788,'23-5月-04',1100,NULL,20);
+INSERT INTO EMP VALUES (7900,'James', 'Clerk',7698,'03-12月-03',950,NULL,30);
+INSERT INTO EMP VALUES (7902,'Ford', 'Analyst',7566,'03-12月-07',3000,NULL,20);
+INSERT INTO EMP VALUES (7934,'Miller', 'Clerk',7782,'23-1月-09',1300,NULL,10);
+
+
+SELECT *
+FROM Dept;
+
+SELECT *
+FROM Emp;
+
+SELECT DeptNO,Dname
+FROM Dept
+ORDER BY Dname;
+
+SELECT Ename,DeptNO,Sal
+FROM Emp
+WHERE Sal BETWEEN 1000 AND 2000;
+
+
+SELECT DISTINCT Job
+FROM Emp;
+
+SELECT EmpNO,Ename
+FROM Emp
+WHERE DeptNO BETWEEN 10 AND 20
+ORDER BY Ename DESC;
+
+SELECT Ename
+FROM Emp
+WHERE DeptNO=20 AND Job='Clerk';
+
+
+SELECT Ename
+FROM Emp
+WHERE Ename LIKE ('%th%') OR
+Ename LIKE ('%ll%');
+
+
+
+SELECT Ename,Sal+Comm
+FROM Emp
+WHERE Comm IS NOT NULL
+UNION
+SELECT Ename,Sal
+FROM Emp
+WHERE Comm IS NULL;
+
+SELECT Ename
+FROM Emp
+WHERE Hiredate LIKE ('09%');
+
+SELECT DeptNO,AVG(Sal)
+FROM Emp
+GROUP BY DeptNO;
+
+SELECT DeptNO,Ename,Sal
+FROM Emp
+WHERE Sal>=ALL(
+SELECT Sal
+FROM Emp);
+
+SELECT A.DeptNO,COUNT(*)
+FROM Emp A
+GROUP BY A.DeptNO
+HAVING Sal>(
+SELECT AVG(Sal)
+From Emp B
+WHERE DeptNO=A.DeptNO);
+
+SELECT EmpNO,Ename,Job,Mgr,Hiredate,Sal,Comm,Emp.DeptNO
+FROM Emp,Dept
+WHERE Emp.DeptNO=Dept.DeptNO AND
+Dname='Research'
+ORDER BY Sal ASC;
+
+SELECT DISTINCT Job
+FROM Emp,Dept
+WHERE Emp.DeptNO=Dept.DeptNO AND
+Dname='Sales';
+
+SELECT Ename,Job,Sal
+FROM Emp
+WHERE Sal>2000 AND
+DeptNO IN (
+SELECT DeptNO
+FROM Dept
+WHERE Dname='Accounting');
+
+SELECT *
+FROM Emp
+WHERE Job IN ('Analyst','Salesman');
+
+SELECT *
+FROM Emp
+WHERE Job='Analyst'
+UNION
+SELECT *
+FROM Emp
+WHERE Job='Salesman';
+
+SELECT Ename,Sal,DeptNO
+FROM Emp
+WHERE DeptNO NOT IN (20) AND
+Sal>SOME(
+SELECT Sal
+FROM Emp
+WHERE DeptNO=20);
+
+SELECT Ename,Sal,DeptNO
+FROM Emp
+WHERE DeptNO NOT IN (20) AND
+Sal>ALL(
+SELECT Sal
+FROM Emp
+WHERE DeptNO=20);
+
+SELECT Ename
+FROM Emp
+WHERE EXISTS(
+SELECT *
+FROM Dept
+WHERE Dept.DeptNO=Emp.DeptNO AND
+Dname='Research');
+
+SELECT Ename
+FROM Emp
+WHERE DeptNO IN (
+SELECT DeptNO
+FROM Dept
+WHERE Dname='Research');
+
+
+SELECT A.Ename,(
+SELECT Ename
+FROM Emp B
+WHERE B.EmpNO=A.Mgr)
+FROM Emp A;
+
+
+SELECT 
+FROM 
+WHERE 
+GROUP BY 
+ORDER BY  ;
+
+
+SELECT COUNT(*)
+FROM Emp A
+WHERE A.Sal>
+(SELECT AVG(Sal)
+FROM Emp B
+WHERE A.DeptNO=B.DeptNO)
+GROUP BY DeptNO;
+
+SELECT A.Ename,A.DeptNO
+FROM Emp A,Emp B
+WHERE A.Mgr=B.EmpNO AND
+A.Hiredate<B.Hiredate;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
